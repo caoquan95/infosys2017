@@ -121,7 +121,7 @@
 %	NAME AND CLASS SECTION
 %----------------------------------------------------------------------------------------
 
-\newcommand{\hmwkTitle}{Report \#2} % Assignment title
+\newcommand{\hmwkTitle}{Report \#3} % Assignment title
 \newcommand{\hmwkDueDate}{Tuesday,\ November 7,\ 2017} % Due date
 \newcommand{\hmwkClass}{MI\ 1.02} % Course/class
 \newcommand{\hmwkClassTime}{5:30pm} % Class/lecture time
@@ -165,43 +165,114 @@
 % To have just one problem per page, simply put a \clearpage after each problem
 \begin{homeworkProblem}
 
-\begin{center}
-\includegraphics[width=0.75\columnwidth]{schema1} %
-\end{center}
-
 \begin{enumerate}
-	\item All info of all employees $$\sigma (employees)$$
-  \item All info of all departments $$\sigma (departments)$$
-  \item Full names of all employees $$\pi_{first\_name, last\_name} (employees)$$
-  \item Names of all departments $$\pi_{dept\_name} (departments)$$
-  \item Full names of employees working in “ICT” department $$ \pi_{last\_name, first\_name}(employees \bowtie (dept\_emp \bowtie \sigma_{dept\_name = "ICT"} departments))$$
-  \item Full names of male employees working in “BIO” department $$ \pi_{last\_name, first\_name}(\sigma_{gender = "M"} employees \bowtie (dept\_emp \bowtie \sigma_{dept\_name = "BIO"} departments))$$
-  \item Salaries of female employees working in “WEO” department $$ \pi_{salary}((\sigma_{gender = "M"} employees  \bowtie salaries) \bowtie (dept\_emp \bowtie \sigma_{dept\_name = "WEO"} departments))$$
+	\item All info of all employees 
+	\begin{lstlisting}[language=SQL]
+	SELECT * FROM employees;
+	\end{lstlisting}
+  \item All info of all departments 
+  \begin{lstlisting}[language=SQL]
+	SELECT * FROM departments;
+	\end{lstlisting}
+  \item Full names of all employees 
+  \begin{lstlisting}[language=SQL]
+	SELECT concat(first_name,' ',last_name) as full_name FROM employees;
+	\end{lstlisting}
+	
+  \item Names of all departments 
+  \begin{lstlisting}[language=SQL]
+	SELECT dept_name FROM departments;
+	\end{lstlisting}
+	
+	
+  \item Full names of employees working in "Sales" department
+   \begin{lstlisting}[language=SQL]
+	SELECT concat(first_name,' ',last_name) as full_name
+		FROM employees
+		JOIN dept_emp ON employees.emp_no = dept_emp.emp_no
+		JOIN departments ON dept_emp.dept_no = departments.dept_no
+		WHERE dept_name = 'Sales';
+	\end{lstlisting}
+	
+	
+  \item Full names of male employees working in "Finance" department 
+\begin{lstlisting}[language=SQL]
+	SELECT concat(first_name,' ',last_name) as full_name
+		FROM employees
+		JOIN dept_emp ON employees.emp_no = dept_emp.emp_no
+		JOIN departments ON dept_emp.dept_no = departments.dept_no
+		WHERE gender = 'M' AND dept_name = 'Finance';
+	\end{lstlisting}  
+  
+  \item Salaries of female employees working in "Marketing" department 
+  \begin{lstlisting}[language=SQL]
+	SELECT employees.emp_no, salary
+		FROM employees
+		JOIN dept_emp ON employees.emp_no = dept_emp.emp_no
+		JOIN departments ON dept_emp.dept_no = departments.dept_no
+		JOIN salaries ON employees.emp_no = salaries.emp_no
+		WHERE gender = 'F' AND dept_name = 'Marketing';
+	\end{lstlisting}  
+	
+	\newpage
+	\item Full names of employees who have the same last name as their manager 
+	\begin{lstlisting}[language=SQL]
+SELECT emp.full_name
+FROM
+  (SELECT
+     concat(first_name, ' ', last_name) AS full_name,
+     last_name,
+     employees.emp_no                   AS empno
+   FROM employees
+     JOIN dept_emp ON employees.emp_no = dept_emp.emp_no) AS emp
+  JOIN (SELECT
+          last_name,
+          employees.emp_no AS empno
+        FROM employees
+          JOIN dept_manager ON employees.emp_no = dept_manager.emp_no) AS man
+    ON emp.last_name = man.last_name;
+	\end{lstlisting}  
+  
+  \item Full names of managers who have been doing the job at least twice (use name g Count()(R) to count) 
+\begin{lstlisting}[language=SQL]
+SELECT concat(first_name, ' ', last_name) AS full_name
+FROM employees
+  JOIN
+  (SELECT emp_no
+   FROM dept_manager
+   GROUP BY emp_no
+   HAVING count(*) > 1) AS R2 ON R2.emp_no = employees.emp_no;
+	\end{lstlisting}  
+	  
+  
+  \item Full names of employees who was paid more than \$100000 
+  \begin{lstlisting}[language=SQL]
+SELECT concat(first_name, ' ', last_name) AS full_name
+FROM employees
+  JOIN salaries ON employees.emp_no = salaries.emp_no
+WHERE salary > 100000;
+	\end{lstlisting}  
+  \item Names of all departments that have employees paid more than \$100000
+  
+  \begin{lstlisting}[language=SQL]
+(SELECT dept_name
+ FROM departments
+   JOIN dept_emp ON departments.dept_no = dept_emp.dept_no
+   JOIN salaries ON dept_emp.emp_no = salaries.emp_no
+ WHERE salary > 100000)
+UNION
+(SELECT dept_name
+ FROM departments
+   JOIN dept_manager ON departments.dept_no = dept_manager.dept_no
+   JOIN salaries ON salaries.emp_no = dept_manager.emp_no
+ WHERE salary > 100000);
+	\end{lstlisting}  
+	
 \end{enumerate}
+
 \end{homeworkProblem}
 
 \newpage
-
-\begin{homeworkProblem}
-
-\begin{center}
-\includegraphics[width=0.75\columnwidth]{schema2} %
-\end{center}
-
-\begin{enumerate}
-	\item Full names of employees who have the same last name as their manager 
-	\begin{align*}
-	\pi_{R1.first\_name, R2.last\_name}(	  (employees \bowtie dept\_emp)\ as\ R1  \\
-	\bowtie_{R1.last\_name = R2.last\_name} (employees \bowtie dept\_manager)\  as\  R2)
-	\end{align*}
-  
-  \item Full names of managers who have been doing the job at least twice (use name g Count()(R) to count) $$\pi_{first\_name, last\_name} (employees \bowtie(\sigma_{count > 2} (\pi_{emp_no, count/count(emp\_no)\ groupby\ emp\_no}(dept\_manager))) ))$$
-  \item Full names of employees who was paid more than \$100000 $$\pi_{fist\_name, last\_name} (employees \bowtie \sigma_{salary > 100000} salaries)$$	
-  \item Names of all departments that have employees paid more than \$1000000 $$\pi_{dept\_name} ( departments \bowtie (dept\_emp \bowtie \sigma_{salary > 100000} salaries))$$	
-  
-\end{enumerate}
-\end{homeworkProblem}
-
 
 
 
