@@ -168,100 +168,69 @@
 \begin{enumerate}
 	\item All info of all employees 
 	\begin{lstlisting}[language=SQL]
-	SELECT * FROM employees;
-	\end{lstlisting}
+INSERT INTO departments VALUES ('d010', 'Research and Development');
+INSERT INTO departments VALUES ('d011', 'Marketing and Sales');
 
-	\begin{center}
-\includegraphics[width=0.75\columnwidth]{1} %
-\end{center}
-		
-	
+UPDATE IGNORE dept_emp
+SET dept_no = 'd010'
+WHERE dept_no = 'd005' OR dept_no = 'd008';
+UPDATE IGNORE dept_emp
+SET dept_no = 'd011'
+WHERE dept_no = 'd001' OR dept_no = 'd007';
+
+UPDATE IGNORE dept_manager
+SET dept_no = 'd010'
+WHERE dept_no = 'd005' OR dept_no = 'd008';
+UPDATE IGNORE dept_manager
+SET dept_no = 'd011'
+WHERE dept_no = 'd001' OR dept_no = 'd007';
+
+DELETE FROM departments
+WHERE dept_no = 'd005' OR dept_no = 'd008' OR dept_no = 'd001' OR dept_no = 'd007';
+	\end{lstlisting}
   \item All info of all departments 
   \begin{lstlisting}[language=SQL]
 	SELECT * FROM departments;
 	\end{lstlisting}
-	\begin{center}
-\includegraphics[width=0.75\columnwidth]{2} %
-\end{center}
-
   \item Full names of all employees 
   \begin{lstlisting}[language=SQL]
 	SELECT concat(first_name,' ',last_name) as full_name FROM employees;
 	\end{lstlisting}
-	\begin{center}
-\includegraphics[width=0.75\columnwidth]{3} %
-\end{center}
-
+	
   \item Names of all departments 
   \begin{lstlisting}[language=SQL]
 	SELECT dept_name FROM departments;
 	\end{lstlisting}
 	
-\begin{center}
-\includegraphics[width=0.75\columnwidth]{4} %
-\end{center}
-	
 	
   \item Full names of employees working in "Sales" department
    \begin{lstlisting}[language=SQL]
-(SELECT concat(first_name, ' ', last_name) AS full_name
- FROM employees
-   JOIN dept_emp ON employees.emp_no = dept_emp.emp_no
-   JOIN departments ON dept_emp.dept_no = departments.dept_no
- WHERE dept_name = 'Sales')
-UNION
-(SELECT concat(first_name, ' ', last_name) AS full_name
- FROM employees
-   JOIN dept_manager ON employees.emp_no = dept_manager.emp_no
-   JOIN departments ON dept_manager.dept_no = departments.dept_no
- WHERE dept_name = 'Sales')
+	SELECT concat(first_name,' ',last_name) as full_name
+		FROM employees
+		JOIN dept_emp ON employees.emp_no = dept_emp.emp_no
+		JOIN departments ON dept_emp.dept_no = departments.dept_no
+		WHERE dept_name = 'Sales';
 	\end{lstlisting}
 	
-	\begin{center}
-\includegraphics[width=0.75\columnwidth]{5} %
-\end{center}
 	
   \item Full names of male employees working in "Finance" department 
 \begin{lstlisting}[language=SQL]
-(SELECT concat(first_name, ' ', last_name) AS full_name
- FROM employees
-   JOIN dept_emp ON employees.emp_no = dept_emp.emp_no
-   JOIN departments ON dept_emp.dept_no = departments.dept_no
- WHERE gender = 'M' AND dept_name = 'Finance')
-UNION
-(SELECT concat(first_name, ' ', last_name) AS full_name
- FROM employees
-   JOIN dept_manager ON employees.emp_no = dept_manager.emp_no
-   JOIN departments ON dept_manager.dept_no = departments.dept_no
- WHERE gender = 'M' AND dept_name = 'Finance')
+	SELECT concat(first_name,' ',last_name) as full_name
+		FROM employees
+		JOIN dept_emp ON employees.emp_no = dept_emp.emp_no
+		JOIN departments ON dept_emp.dept_no = departments.dept_no
+		WHERE gender = 'M' AND dept_name = 'Finance';
 	\end{lstlisting}  
-	\begin{center}
-\includegraphics[width=0.75\columnwidth]{6} %
-\end{center}
   
   \item Salaries of female employees working in "Marketing" department 
   \begin{lstlisting}[language=SQL]
-(SELECT
-   employees.emp_no,
-   salary
- FROM employees
-   JOIN dept_emp ON employees.emp_no = dept_emp.emp_no
-   JOIN departments ON dept_emp.dept_no = departments.dept_no
-   JOIN salaries ON employees.emp_no = salaries.emp_no
- WHERE gender = 'F' AND dept_name = 'Marketing')
-UNION
-(SELECT
-   employees.emp_no,
-   salary
- FROM employees
-   JOIN dept_manager ON employees.emp_no = dept_manager.emp_no
-   JOIN departments ON dept_manager.dept_no = departments.dept_no
-   JOIN salaries ON employees.emp_no = salaries.emp_no
- WHERE gender = 'F' AND dept_name = 'Marketing');
+	SELECT employees.emp_no, salary
+		FROM employees
+		JOIN dept_emp ON employees.emp_no = dept_emp.emp_no
+		JOIN departments ON dept_emp.dept_no = departments.dept_no
+		JOIN salaries ON employees.emp_no = salaries.emp_no
+		WHERE gender = 'F' AND dept_name = 'Marketing';
 	\end{lstlisting}  
-	\begin{center}
-\includegraphics[width=0.75\columnwidth]{7} %
-\end{center}
 	
 	\newpage
 	\item Full names of employees who have the same last name as their manager 
@@ -281,9 +250,6 @@ FROM
           JOIN dept_manager ON employees.emp_no = dept_manager.emp_no) AS man
     ON emp.last_name = man.last_name;
 	\end{lstlisting}  
-	\begin{center}
-\includegraphics[width=0.75\columnwidth]{8} %
-\end{center}
   
   \item Full names of managers who have been doing the job at least twice (use name g Count()(R) to count) 
 \begin{lstlisting}[language=SQL]
@@ -295,10 +261,6 @@ FROM employees
    GROUP BY emp_no
    HAVING count(*) > 1) AS R2 ON R2.emp_no = employees.emp_no;
 	\end{lstlisting}  
-	
-	\begin{center}
-\includegraphics[width=0.75\columnwidth]{9} %
-\end{center}
 	  
   
   \item Full names of employees who was paid more than \$100000 
@@ -308,10 +270,6 @@ FROM employees
   JOIN salaries ON employees.emp_no = salaries.emp_no
 WHERE salary > 100000;
 	\end{lstlisting}  
-\begin{center}
-\includegraphics[width=0.75\columnwidth]{10} %
-\end{center}	
-	
   \item Names of all departments that have employees paid more than \$100000
   
   \begin{lstlisting}[language=SQL]
@@ -327,10 +285,6 @@ UNION
    JOIN salaries ON salaries.emp_no = dept_manager.emp_no
  WHERE salary > 100000);
 	\end{lstlisting}  
-	
-	\begin{center}
-\includegraphics[width=0.75\columnwidth]{11} %
-\end{center}	
 	
 \end{enumerate}
 
