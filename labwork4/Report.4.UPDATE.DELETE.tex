@@ -121,8 +121,8 @@
 %	NAME AND CLASS SECTION
 %----------------------------------------------------------------------------------------
 
-\newcommand{\hmwkTitle}{Report \#3} % Assignment title
-\newcommand{\hmwkDueDate}{Tuesday,\ November 7,\ 2017} % Due date
+\newcommand{\hmwkTitle}{Report \#4} % Assignment title
+\newcommand{\hmwkDueDate}{} % Due date
 \newcommand{\hmwkClass}{MI\ 1.02} % Course/class
 \newcommand{\hmwkClassTime}{5:30pm} % Class/lecture time
 \newcommand{\hmwkClassInstructor}{Nghiem Thi Phuong} % Teacher/lecturer
@@ -166,126 +166,61 @@
 \begin{homeworkProblem}
 
 \begin{enumerate}
-	\item All info of all employees 
+	\item Insert department Research and Development
 	\begin{lstlisting}[language=SQL]
 INSERT INTO departments VALUES ('d010', 'Research and Development');
+	\end{lstlisting}
+	\begin{center}
+\includegraphics[width=0.75\columnwidth]{1} %
+\end{center}
+
+\item Insert department Marketing and Sales
+	\begin{lstlisting}[language=SQL]
 INSERT INTO departments VALUES ('d011', 'Marketing and Sales');
+	\end{lstlisting}
+	\begin{center}
+\includegraphics[width=0.75\columnwidth]{2} %
+\end{center}
 
+\item Move all employees from the old departments to the new departments
+	\begin{lstlisting}[language=SQL]
 UPDATE IGNORE dept_emp
 SET dept_no = 'd010'
 WHERE dept_no = 'd005' OR dept_no = 'd008';
 UPDATE IGNORE dept_emp
 SET dept_no = 'd011'
 WHERE dept_no = 'd001' OR dept_no = 'd007';
+	\end{lstlisting}
 
+	\begin{center}
+\includegraphics[width=0.75\columnwidth]{4} %
+\includegraphics[width=0.75\columnwidth]{5} %
+\end{center}
+
+\item Move all managers from the old departments to the new departments
+	\begin{lstlisting}[language=SQL]
 UPDATE IGNORE dept_manager
 SET dept_no = 'd010'
 WHERE dept_no = 'd005' OR dept_no = 'd008';
 UPDATE IGNORE dept_manager
 SET dept_no = 'd011'
 WHERE dept_no = 'd001' OR dept_no = 'd007';
+	\end{lstlisting}
+	\begin{center}
+\includegraphics[width=0.75\columnwidth]{6} %
+\end{center}
 
+\newpage
+
+\item Delete old departments
+	\begin{lstlisting}[language=SQL]
 DELETE FROM departments
 WHERE dept_no = 'd005' OR dept_no = 'd008' OR dept_no = 'd001' OR dept_no = 'd007';
 	\end{lstlisting}
-  \item All info of all departments 
-  \begin{lstlisting}[language=SQL]
-	SELECT * FROM departments;
-	\end{lstlisting}
-  \item Full names of all employees 
-  \begin{lstlisting}[language=SQL]
-	SELECT concat(first_name,' ',last_name) as full_name FROM employees;
-	\end{lstlisting}
-	
-  \item Names of all departments 
-  \begin{lstlisting}[language=SQL]
-	SELECT dept_name FROM departments;
-	\end{lstlisting}
-	
-	
-  \item Full names of employees working in "Sales" department
-   \begin{lstlisting}[language=SQL]
-	SELECT concat(first_name,' ',last_name) as full_name
-		FROM employees
-		JOIN dept_emp ON employees.emp_no = dept_emp.emp_no
-		JOIN departments ON dept_emp.dept_no = departments.dept_no
-		WHERE dept_name = 'Sales';
-	\end{lstlisting}
-	
-	
-  \item Full names of male employees working in "Finance" department 
-\begin{lstlisting}[language=SQL]
-	SELECT concat(first_name,' ',last_name) as full_name
-		FROM employees
-		JOIN dept_emp ON employees.emp_no = dept_emp.emp_no
-		JOIN departments ON dept_emp.dept_no = departments.dept_no
-		WHERE gender = 'M' AND dept_name = 'Finance';
-	\end{lstlisting}  
-  
-  \item Salaries of female employees working in "Marketing" department 
-  \begin{lstlisting}[language=SQL]
-	SELECT employees.emp_no, salary
-		FROM employees
-		JOIN dept_emp ON employees.emp_no = dept_emp.emp_no
-		JOIN departments ON dept_emp.dept_no = departments.dept_no
-		JOIN salaries ON employees.emp_no = salaries.emp_no
-		WHERE gender = 'F' AND dept_name = 'Marketing';
-	\end{lstlisting}  
-	
-	\newpage
-	\item Full names of employees who have the same last name as their manager 
-	\begin{lstlisting}[language=SQL]
-SELECT emp.full_name
-FROM
-  (SELECT
-     concat(first_name, ' ', last_name) AS full_name,
-     last_name,
-     employees.emp_no                   AS empno
-   FROM employees
-     JOIN dept_emp ON employees.emp_no = dept_emp.emp_no) AS emp
-  JOIN (SELECT
-          last_name,
-          employees.emp_no AS empno
-        FROM employees
-          JOIN dept_manager ON employees.emp_no = dept_manager.emp_no) AS man
-    ON emp.last_name = man.last_name;
-	\end{lstlisting}  
-  
-  \item Full names of managers who have been doing the job at least twice (use name g Count()(R) to count) 
-\begin{lstlisting}[language=SQL]
-SELECT concat(first_name, ' ', last_name) AS full_name
-FROM employees
-  JOIN
-  (SELECT emp_no
-   FROM dept_manager
-   GROUP BY emp_no
-   HAVING count(*) > 1) AS R2 ON R2.emp_no = employees.emp_no;
-	\end{lstlisting}  
-	  
-  
-  \item Full names of employees who was paid more than \$100000 
-  \begin{lstlisting}[language=SQL]
-SELECT concat(first_name, ' ', last_name) AS full_name
-FROM employees
-  JOIN salaries ON employees.emp_no = salaries.emp_no
-WHERE salary > 100000;
-	\end{lstlisting}  
-  \item Names of all departments that have employees paid more than \$100000
-  
-  \begin{lstlisting}[language=SQL]
-(SELECT dept_name
- FROM departments
-   JOIN dept_emp ON departments.dept_no = dept_emp.dept_no
-   JOIN salaries ON dept_emp.emp_no = salaries.emp_no
- WHERE salary > 100000)
-UNION
-(SELECT dept_name
- FROM departments
-   JOIN dept_manager ON departments.dept_no = dept_manager.dept_no
-   JOIN salaries ON salaries.emp_no = dept_manager.emp_no
- WHERE salary > 100000);
-	\end{lstlisting}  
-	
+	\begin{center}
+\includegraphics[width=0.75\columnwidth]{7} %
+\end{center}
+
 \end{enumerate}
 
 \end{homeworkProblem}
