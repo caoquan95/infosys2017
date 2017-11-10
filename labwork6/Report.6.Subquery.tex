@@ -207,15 +207,19 @@ WHERE dept_emp.dept_no = (
 \item Find the average salary of each department, from highest to lowest.
 \begin{lstlisting}[language=SQL]
 SELECT
-  dept_no,
-  AVG(salary) AS avg_salary
-FROM
+  dept_name,
+  avg(average_salary) AS avg_salary
+FROM dept_emp
+  JOIN
   (SELECT
-     dept_no,
-     salary
+     emp_no,
+     avg(salary) AS average_salary
    FROM salaries
-     JOIN dept_emp ON salaries.emp_no = dept_emp.emp_no) AS tmp
-GROUP BY tmp.dept_no
+   GROUP BY emp_no) AS t1
+    ON dept_emp.emp_no = t1.emp_no
+  JOIN departments
+    ON departments.dept_no = dept_emp.dept_no
+GROUP BY departments.dept_no
 ORDER BY avg_salary DESC;
 	\end{lstlisting}
 	\begin{center}
@@ -226,15 +230,18 @@ ORDER BY avg_salary DESC;
 \item Find the average salary for each type of Engineer, from highest to lowest.
 \begin{lstlisting}[language=SQL]
 SELECT
-  title,¬
-  AVG(salary) as avg_salary
+  title,
+  avg(average_salary) AS avg_salary
 FROM
+  titles
+  JOIN
   (SELECT
-     title,
-     salary
+     emp_no,
+     avg(salary) AS average_salary
    FROM salaries
-     JOIN titles ON salaries.emp_no = titles.emp_no
-   WHERE title LIKE '%Engineer%') AS tmp
+   GROUP BY emp_no) AS t1
+    ON titles.emp_no = t1.emp_no
+WHERE title LIKE "%Engineer%"
 GROUP BY title
 ORDER BY avg_salary DESC;
 	\end{lstlisting}

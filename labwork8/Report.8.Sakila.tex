@@ -168,20 +168,7 @@
 \begin{enumerate}
 \item Who have the same name as the managers of the “Finance” department?
 \begin{lstlisting}[language=SQL]
-CREATE VIEW emp_finance_last_name AS
-  SELECT last_name
-  FROM
-    employees
-    JOIN dept_manager ON employees.emp_no = dept_manager.emp_no
-    JOIN departments ON dept_manager.dept_no = departments.dept_no
-  WHERE departments.dept_name = 'Finance';
 
-SELECT *
-FROM employees
-WHERE employees.last_name IN (
-  SELECT last_name
-  FROM emp_finance_last_name
-);
 	\end{lstlisting}
 	\begin{center}
 \includegraphics[width=0.75\columnwidth]{11} %
@@ -190,84 +177,6 @@ WHERE employees.last_name IN (
 \end{center}
 
 \newpage
-
-\item Who in the “Production” department were hired after the promotion of the last manager in that department?
-\begin{lstlisting}[language=SQL]
-CREATE VIEW last_promo AS
-  SELECT MAX(from_date) AS max_date
-  FROM dept_manager
-    JOIN departments ON dept_manager.dept_no = departments.dept_no
-  WHERE dept_name = 'Production';
-
-SELECT *
-FROM employees
-  JOIN dept_emp ON employees.emp_no = dept_emp.emp_no
-WHERE dept_emp.dept_no = (
-  SELECT dept_no
-  FROM departments
-  WHERE dept_name = 'Production'
-) AND employees.hire_date >
-      (SELECT max_date
-       FROM last_promo);
-	\end{lstlisting}
-	\begin{center}
-\includegraphics[width=0.75\columnwidth]{21} %
-\includegraphics[width=0.75\columnwidth]{22} %
-\includegraphics[width=0.75\columnwidth]{23} %
-\end{center}
-
-\newpage
-
-\item Find the average salary of each department, from highest to lowest.
-\begin{lstlisting}[language=SQL]
-CREATE VIEW avg_salary_emp AS
-  SELECT
-    emp_no,
-    avg(salary) AS average_salary
-  FROM salaries
-  GROUP BY emp_no;
-
-SELECT
-  dept_name,
-  avg(average_salary) AS avg_salary
-FROM dept_emp
-  JOIN avg_salary_emp
-    ON dept_emp.emp_no = avg_salary_emp.emp_no
-  JOIN departments
-    ON departments.dept_no = dept_emp.dept_no
-GROUP BY departments.dept_no
-ORDER BY avg_salary DESC;
-	\end{lstlisting}
-	\begin{center}
-\includegraphics[width=0.75\columnwidth]{31} %
-\end{center}
-
-
-\item Find the average salary for each type of Engineer, from highest to lowest.
-\begin{lstlisting}[language=SQL]
-CREATE VIEW avg_salary_emp AS
-  SELECT
-    emp_no,
-    avg(salary) AS average_salary
-  FROM salaries
-  GROUP BY emp_no;
-
-
-SELECT
-  title,
-  avg(average_salary) AS avg_salary
-FROM
-  titles
-  JOIN avg_salary_emp
-    ON titles.emp_no = avg_salary_emp.emp_no
-WHERE title LIKE "%Engineer%"
-GROUP BY title
-ORDER BY avg_salary DESC;
-
-	\end{lstlisting}
-	\begin{center}
-\includegraphics[width=0.75\columnwidth]{41} %
-\end{center}
 
 
 \end{enumerate}
