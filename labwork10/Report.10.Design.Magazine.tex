@@ -9,7 +9,7 @@
 \usepackage{listings} % Required for insertion of code
 \usepackage{courier} % Required for the courier font
 \usepackage{lipsum} % Used for inserting dummy 'Lorem ipsum' text into the template
-
+\graphicspath{ {images/} }
 % Margins
 \topmargin=-0.45in
 \evensidemargin=0in
@@ -121,7 +121,7 @@
 %	NAME AND CLASS SECTION
 %----------------------------------------------------------------------------------------
 
-\newcommand{\hmwkTitle}{Report \#9} % Assignment title
+\newcommand{\hmwkTitle}{Report \#10} % Assignment title
 \newcommand{\hmwkDueDate}{} % Due date
 \newcommand{\hmwkClass}{MI\ 1.02} % Course/class
 \newcommand{\hmwkClassTime}{5:30pm} % Class/lecture time
@@ -165,22 +165,97 @@
 % To have just one problem per page, simply put a \clearpage after each problem
 \begin{homeworkProblem}
 
-The employees database satisfies the 3NF because:
+\begin{enumerate}
+
+
+\item Determine \emph{Concepts}
+
 \begin{itemize}
-\item There is no repeated column
-\item Cell contains only atomic value
-\item Each non-key depends on the primary key
-\item Non-key column depends on the primary key
-\item Only columns that are non-transitively dependent on the primary key
+
+\item Magazine
+\item Article
+\item Author
+\begin{center}
+\includegraphics[width=0.75\textwidth]{concept.png}
+\end{center}
 \end{itemize}
 
-\end{homeworkProblem}
-
-\begin{homeworkProblem}
+\item Determine Attributes of each concept
 \begin{center}
-\includegraphics[scale=0.75]{1}
+\includegraphics[width=0.75\textwidth]{attributes.png}
 \end{center}
 
+
+\item Determine links (relationships) between them
+\begin{center}
+\includegraphics[width=0.75\textwidth]{relations.png}
+\end{center}
+
+
+\item Determine types of each concept attribute 
+
+\begin{center}
+\includegraphics[width=0.75\textwidth]{types.png}
+\end{center}
+
+
+\item Solve foreign key links
+
+\begin{center}
+\includegraphics[width=0.75\textwidth]{keys.png}
+\end{center}
+
+\item Implementation
+
+\begin{lstlisting}[language=SQL]
+
+create database magazine;
+use magazine;
+
+CREATE TABLE Magazine (
+	id INT NOT NULL AUTO_INCREMENT,
+	title VARCHAR(50),
+	issn VARCHAR(50),
+	`year` INT,
+	`order` INT,
+	number INT,
+	PRIMARY KEY (id)
+);
+
+CREATE TABLE Article (
+	id INT NOT NULL AUTO_INCREMENT,
+	magazineId INT NOT NULL,
+	title VARCHAR(50),
+	beginPage INT,
+	endPage INT,
+	PRIMARY KEY (id),
+	FOREIGN KEY (magazineId) REFERENCES Magazine(id)
+);
+
+CREATE TABLE Author (
+	id INT NOT NULL AUTO_INCREMENT,
+	name VARCHAR(50),
+	email VARCHAR(50),
+	ascription VARCHAR(250),
+	PRIMARY KEY (id)
+);
+
+
+CREATE TABLE ArticleAuthor (
+	articleId INT NOT NULL,
+	authorId INT NOT NULL,
+	PRIMARY KEY (authorId,articleId),
+	FOREIGN KEY (articleId) REFERENCES Article(id),
+	FOREIGN KEY (authorId) REFERENCES Author(id)
+);
+
+
+
+\end{lstlisting}
+
+
+
+\end{enumerate}
 
 \end{homeworkProblem}
 

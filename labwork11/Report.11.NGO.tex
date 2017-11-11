@@ -9,7 +9,7 @@
 \usepackage{listings} % Required for insertion of code
 \usepackage{courier} % Required for the courier font
 \usepackage{lipsum} % Used for inserting dummy 'Lorem ipsum' text into the template
-
+\graphicspath{ {images/} }
 % Margins
 \topmargin=-0.45in
 \evensidemargin=0in
@@ -121,7 +121,7 @@
 %	NAME AND CLASS SECTION
 %----------------------------------------------------------------------------------------
 
-\newcommand{\hmwkTitle}{Report \#9} % Assignment title
+\newcommand{\hmwkTitle}{Report \#11} % Assignment title
 \newcommand{\hmwkDueDate}{} % Due date
 \newcommand{\hmwkClass}{MI\ 1.02} % Course/class
 \newcommand{\hmwkClassTime}{5:30pm} % Class/lecture time
@@ -165,22 +165,112 @@
 % To have just one problem per page, simply put a \clearpage after each problem
 \begin{homeworkProblem}
 
-The employees database satisfies the 3NF because:
+
+\begin{enumerate}
+
+
+
+\item Determine \emph{Concepts}
+
 \begin{itemize}
-\item There is no repeated column
-\item Cell contains only atomic value
-\item Each non-key depends on the primary key
-\item Non-key column depends on the primary key
-\item Only columns that are non-transitively dependent on the primary key
+
+\item Magazine
+\item Article
+\item Author
+\begin{center}
+\includegraphics[width=\textwidth]{concept.png}
+\end{center}
 \end{itemize}
 
-\end{homeworkProblem}
-
-\begin{homeworkProblem}
+\item Determine Attributes of each concept
 \begin{center}
-\includegraphics[scale=0.75]{1}
+\includegraphics[width=\textwidth]{attributes.png}
 \end{center}
 
+
+\item Determine links (relationships) between them
+\begin{center}
+\includegraphics[width=\textwidth]{relations.png}
+\end{center}
+
+
+\item Determine types of each concept attribute 
+
+\begin{center}
+\includegraphics[width=\textwidth]{types.png}
+\end{center}
+
+
+\item Solve foreign key links
+
+\begin{center}
+\includegraphics[width=\textwidth]{keys.png}
+\end{center}
+
+\item Implementation
+
+\begin{lstlisting}[language=SQL]
+
+create database magazine;
+use magazine;
+
+CREATE TABLE Person (
+	id INT NOT NULL AUTO_INCREMENT,
+	name VARCHAR(50),
+	PRIMARY KEY (id)
+);
+
+CREATE TABLE City (
+	id INT NOT NULL AUTO_INCREMENT,
+	name VARCHAR(50),
+	country VARCHAR(50),
+	inhabitants INT,
+	PRIMARY KEY (id)
+);
+
+CREATE TABLE Office (
+	id INT NOT NULL AUTO_INCREMENT,
+	directorId INT NOT NULL,
+	cityId INT NOT NULL,
+	address VARCHAR(50),
+	phone VARCHAR(50),
+	PRIMARY KEY (id),
+	FOREIGN KEY (directorId) REFERENCES Person(id),
+	FOREIGN KEY (cityId) REFERENCES City(id)
+);
+
+CREATE TABLE Project (
+	id INT NOT NULL AUTO_INCREMENT,
+	code VARCHAR(50),
+	title VARCHAR(50),
+	endDate Date,
+	beginDate Date,
+	budget INT,
+	personId INT,
+	PRIMARY KEY (id),
+	FOREIGN KEY (personId) REFERENCES Person(id)
+);
+
+
+CREATE TABLE Action (
+	id INT NOT NULL,
+	name VARCHAR(50),
+	investment INT,
+	projectId INT,
+	cityId INT,
+	description VARCHAR(255)
+	PRIMARY KEY (id),
+	FOREIGN KEY (cityId) REFERENCES City(id),
+	FOREIGN KEY (projectId) REFERENCES Project(id)
+);
+
+
+
+\end{lstlisting}
+
+
+
+\end{enumerate}
 
 \end{homeworkProblem}
 
